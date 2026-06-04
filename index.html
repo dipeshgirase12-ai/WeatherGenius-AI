@@ -1,0 +1,334 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>WeatherPro AI Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div class="bg-orb orb-one"></div>
+    <div class="bg-orb orb-two"></div>
+    <div class="weather-scene" id="weather-scene"></div>
+
+    <div class="app-shell">
+        <header class="top-bar-wrapper">
+            <div class="brand-block">
+                <span class="brand-icon">
+                    <i class="fa-solid fa-cloud-sun-rain"></i>
+                </span>
+
+                <div>
+                    <h1>WeatherPro AI</h1>
+                    <p>Live weather, AQI, charts & smart suggestions</p>
+                </div>
+            </div>
+
+            <div class="top-bar">
+                <button id="theme-toggle" class="round-btn" aria-label="Toggle Theme">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+
+                <div class="search-wrap">
+                    <div class="search-box">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+                        <input type="text" id="city-input" autocomplete="off" placeholder="Search city..." />
+
+                        <button id="voice-btn" class="mini-btn" title="Voice search">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+
+                    <div id="suggestions" class="suggestions"></div>
+                </div>
+
+                <button id="location-btn" class="action-btn">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    Current
+                </button>
+
+                <!-- Social buttons -->
+                <a class="social-btn instagram" href="https://www.instagram.com/rajput_dipesh_46?igsh=MW5va3Y3ZTV6MTdrYg==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                    <i class="fa-brands fa-instagram"></i>
+                    <span>Instagram</span>
+                </a>
+
+                <a class="social-btn linkedin" href="https://www.linkedin.com/in/dipesh-girase-4598b52b2?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                    <i class="fa-brands fa-linkedin-in"></i>
+                    <span>LinkedIn</span>
+                </a>
+            </div>
+
+
+            <div class="chips-row">
+                <div id="recent-cities" class="city-chip-wrap"></div>
+            </div>
+        </header>
+
+        <div id="loader" class="loader-card">
+            <div class="spinner"></div>
+            <div>
+                <strong>Fetching live weather...</strong>
+                <p>Building your smart dashboard</p>
+            </div>
+        </div>
+
+        <div id="error-message" class="error-card">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            City not found. Please try again.
+        </div>
+
+        <main class="weather-grid animate-in" id="weather-dashboard" style="display: none;">
+            <section class="card time-card">
+                <div class="city-head">
+                    <div>
+                        <h2 id="city-name">Kolkata</h2>
+                        <p id="country-name">India</p>
+                    </div>
+
+                    <button id="favorite-btn" class="favorite-btn" title="Save favorite">
+                        <i class="fa-regular fa-star"></i>
+                    </button>
+                </div>
+
+                <h1 id="current-time">--:--</h1>
+                <p id="current-date">--</p>
+
+                <div class="mini-status" id="last-updated">Updated just now</div>
+            </section>
+
+            <section class="card current-weather-card">
+                <div class="weather-info-primary" id="weather-bg-panel">
+                    <div class="main-details">
+                        <p class="label">Current Weather</p>
+
+                        <h1 id="main-temp">--°C</h1>
+
+                        <p class="feels-like">
+                            Feels like: <span id="feels-like">--°C</span>
+                        </p>
+
+                        <div class="sun-times-inline">
+                            <p>
+                                <i class="fa-regular fa-sun"></i>
+                                <span id="sunrise">--:--</span>
+                            </p>
+
+                            <p>
+                                <i class="fa-solid fa-moon"></i>
+                                <span id="sunset">--:--</span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="large-weather-icon-block">
+                        <div class="large-icon-container" id="large-weather-icon"></div>
+                        <h3 id="weather-condition">--</h3>
+                    </div>
+                </div>
+
+                <div class="split-metrics">
+                    <div class="metric-item">
+                        <i class="fa-solid fa-droplet modern-icon"></i>
+                        <p id="humidity">--%</p>
+                        <span>Humidity</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <i class="fa-solid fa-wind modern-icon"></i>
+                        <p id="wind-speed">-- km/h</p>
+                        <span>Wind Speed</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <i class="fa-solid fa-gauge-high modern-icon"></i>
+                        <p id="pressure">-- hPa</p>
+                        <span>Pressure</span>
+                    </div>
+
+                    <div class="metric-item">
+                        <i class="fa-solid fa-eye modern-icon"></i>
+                        <p id="visibility">-- km</p>
+                        <span>Visibility</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card ai-card">
+                <div class="section-head">
+                    <h3>
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        AI Weather Coach
+                    </h3>
+                </div>
+
+                <p id="ai-summary">Search a city to get smart suggestions.</p>
+                <div id="ai-tags" class="ai-tags"></div>
+            </section>
+
+            <section class="card aqi-card">
+                <div class="section-head">
+                    <h3>
+                        <i class="fa-solid fa-mask-face"></i>
+                        Air Quality
+                    </h3>
+
+                    <span id="aqi-badge">--</span>
+                </div>
+
+                <div class="aqi-meter">
+                    <div id="aqi-fill"></div>
+                </div>
+
+                <p id="aqi-text">AQI details will appear here.</p>
+
+                <div class="pollutant-grid">
+                    <div>
+                        <strong id="pm25">--</strong>
+                        <span>PM2.5</span>
+                    </div>
+
+                    <div>
+                        <strong id="pm10">--</strong>
+                        <span>PM10</span>
+                    </div>
+
+                    <div>
+                        <strong id="co">--</strong>
+                        <span>CO</span>
+                    </div>
+
+                    <div>
+                        <strong id="no2">--</strong>
+                        <span>NO₂</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card forecast-card">
+                <h3>7 Days Forecast</h3>
+                <div id="seven-day-container" class="forecast-list"></div>
+            </section>
+
+            <section class="card hourly-card">
+                <h3>Hourly Forecast</h3>
+
+                <div id="hourly-container" class="hourly-list"></div>
+
+                <div class="sun-tracker-container">
+                    <svg viewBox="0 0 800 320" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+                        <line x1="20" y1="180" x2="780" y2="180" stroke-dasharray="6,6" stroke-width="1.5"
+                            class="svg-line" />
+
+                        <path d="M 50,180 Q 225,30 400,180 T 750,180" fill="none" stroke-width="2" class="svg-line" />
+
+                        <g class="dynamic-fill" id="svg-fill">
+                            <path d="M 50,180 Q 225,30 400,180 Z" fill="rgba(245, 158, 11, 0.85)" />
+
+                            <path d="M 400,180 Q 575,330 750,180 Z" fill="rgba(106, 130, 199, 0.5)" />
+                        </g>
+
+                        <g class="sun-icon-svg" id="svg-sun"></g>
+
+                        <circle cx="50" cy="180" r="4" class="svg-dot" />
+                        <circle cx="400" cy="180" r="4" class="svg-dot" />
+                        <circle cx="750" cy="180" r="4" class="svg-dot" />
+
+                        <circle cx="225" cy="105" r="3" class="svg-dot-small" />
+                        <circle cx="575" cy="255" r="3" class="svg-dot-small" />
+
+                        <text x="50" y="210" text-anchor="middle" class="svg-text-title" id="svg-label-left-text">
+                            SUNRISE
+                        </text>
+
+                        <text x="50" y="230" text-anchor="middle" class="svg-text-time" id="svg-label-left-time">
+                            --:--
+                        </text>
+
+                        <text x="225" y="85" text-anchor="middle" class="svg-text-title">
+                            NOON
+                        </text>
+
+                        <text x="225" y="65" text-anchor="middle" class="svg-text-time" id="svg-label-noon-time">
+                            --:--
+                        </text>
+
+                        <text x="400" y="210" text-anchor="middle" class="svg-text-title" id="svg-label-mid-text">
+                            SUNSET
+                        </text>
+
+                        <text x="400" y="230" text-anchor="middle" class="svg-text-time" id="svg-label-mid-time">
+                            --:--
+                        </text>
+
+                        <text x="575" y="285" text-anchor="middle" class="svg-text-title">
+                            MIDNIGHT
+                        </text>
+
+                        <text x="575" y="305" text-anchor="middle" class="svg-text-time" id="svg-label-midnight-time">
+                            --:--
+                        </text>
+
+                        <text x="750" y="145" text-anchor="middle" class="svg-text-title" id="svg-label-right-text">
+                            SUNRISE
+                        </text>
+
+                        <text x="750" y="165" text-anchor="middle" class="svg-text-time" id="svg-label-right-time">
+                            --:--
+                        </text>
+                    </svg>
+                </div>
+            </section>
+
+            <section class="card chart-card humidity-chart-card">
+                <div class="section-head">
+                    <h3>
+                        <i class="fa-solid fa-water"></i>
+                        Humidity Trend
+                    </h3>
+
+                    <span>Next 24 hours</span>
+                </div>
+
+                <div class="chart-box">
+                    <canvas id="humidityChart"></canvas>
+                </div>
+            </section>
+
+            <section class="card chart-card temp-chart-card">
+                <div class="section-head">
+                    <h3>
+                        <i class="fa-solid fa-chart-line"></i>
+                        Temperature Trend
+                    </h3>
+
+                    <span>Next 24 hours</span>
+                </div>
+
+                <div class="chart-box">
+                    <canvas id="tempChart"></canvas>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

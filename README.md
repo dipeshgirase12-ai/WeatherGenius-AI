@@ -4,7 +4,7 @@ A modern AI-powered weather application that delivers real-time weather informat
 
 ## 🚀 Live Demo
 
-🌐 Live Website: https://weatherpro-ai.vercel.app/
+🌐 Live Website: http://127.0.0.1:5500/
 
 ---
 

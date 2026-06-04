@@ -124,31 +124,38 @@ function pickBestGeoResult(geoData, query) {
   )[0];
 }
 
-function formatTime(unixTime, timezoneOffset, withAmPm = true) {
-  const date = new Date((unixTime + timezoneOffset) * 1000);
-  let hours = date.getUTCHours();
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-  const ampm = hours >= 12 ? "PM" : "AM";
+function formatTime(unixTime, tzOffsetSeconds, withAmPm = true) {
+  // tzOffsetSeconds is OpenWeather's city timezone offset from UTC in seconds
+  const d = new Date(unixTime * 1000);
 
-  hours = hours % 12 || 12;
+  // Convert to the target timezone by shifting the date value.
+  const localMs = d.getTime() + tzOffsetSeconds * 1000;
+  const local = new Date(localMs);
 
-  return withAmPm ? `${hours}:${minutes} ${ampm}` : `${hours}:${minutes}`;
+  let hours24 = local.getUTCHours();
+  const minutes = String(local.getUTCMinutes()).padStart(2, "0");
+
+  const ampm = hours24 >= 12 ? "PM" : "AM";
+  const hours12 = hours24 % 12 || 12;
+
+  return withAmPm ? `${hours12}:${minutes} ${ampm}` : `${hours12}:${minutes}`;
 }
 
-function formatDate(unixTime, timezoneOffset) {
-  const date = new Date((unixTime + timezoneOffset) * 1000);
+function formatDate(unixTime, tzOffsetSeconds) {
+  const localMs = new Date(unixTime * 1000).getTime() + tzOffsetSeconds * 1000;
+  const local = new Date(localMs);
 
-  const weekday = date.toLocaleDateString("en-US", {
+  const weekday = local.toLocaleDateString("en-US", {
     weekday: "short",
     timeZone: "UTC"
   });
 
-  const day = date.toLocaleDateString("en-US", {
+  const day = local.toLocaleDateString("en-US", {
     day: "2-digit",
     timeZone: "UTC"
   });
 
-  const month = date.toLocaleDateString("en-US", {
+  const month = local.toLocaleDateString("en-US", {
     month: "short",
     timeZone: "UTC"
   });
@@ -156,20 +163,22 @@ function formatDate(unixTime, timezoneOffset) {
   return `${weekday} • ${day} ${month}`;
 }
 
-function formatTimeParts(unixTime, timezoneOffset) {
-  const date = new Date((unixTime + timezoneOffset) * 1000);
+function formatTimeParts(unixTime, tzOffsetSeconds) {
+  const localMs = new Date(unixTime * 1000).getTime() + tzOffsetSeconds * 1000;
+  const local = new Date(localMs);
 
-  let hours = date.getUTCHours();
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-  const ampm = hours >= 12 ? "PM" : "AM";
+  const hours24 = local.getUTCHours();
+  const minutes = String(local.getUTCMinutes()).padStart(2, "0");
 
-  hours = hours % 12 || 12;
+  const ampm = hours24 >= 12 ? "PM" : "AM";
+  const hours12 = hours24 % 12 || 12;
 
   return {
-    time: `${hours}:${minutes}`,
+    time: `${hours12}:${minutes}`,
     ampm
   };
 }
+
 
 function getLocationLabel(data) {
   if (activeLocationLabel) {

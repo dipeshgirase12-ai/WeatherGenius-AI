@@ -1402,11 +1402,23 @@ body.dark-mode .svg-dot-small {
   gap: 10px;
 }
 
-.time-ampm {
+time-ampm {
   font-size: 22px;
   font-weight: 800;
   color: var(--text-muted);
   margin-bottom: 10px;
+  letter-spacing: 0.2px;
+}
+
+.time-card #current-time,
+.time-card #current-date,
+.time-card #sunrise,
+.time-card #sunset,
+.svg-text-time,
+#last-updated {
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .time-card #current-date {
@@ -1426,3 +1438,50 @@ body.dark-mode .svg-dot-small {
 .mini-status {
   display: none;
 }
+
+/* Social buttons */
+.social-btn {
+  text-decoration: none;
+  border: var(--card-border);
+  background: var(--search-bg);
+  color: var(--text-main);
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  transition: 0.25s;
+  border-radius: 999px;
+  padding: 0 16px;
+  min-height: 54px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.social-btn i {
+  font-size: 18px;
+}
+
+.social-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.98);
+}
+
+.social-btn.instagram i {
+  color: #e1306c;
+}
+
+.social-btn.linkedin i {
+  color: #0a66c2;
+}
+
+@media (max-width: 900px) {
+  .social-btn {
+    order: 3;
+    flex: 1;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 12px;
+  }
+}
+
